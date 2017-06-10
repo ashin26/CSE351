@@ -1,7 +1,7 @@
 /*
   CSE 351 Lab 0
-  Lecture 2 and the first section meeting will help you
-  if none of this makes sense yet.
+  Aigerim Shintemirova
+  Spring 2017
 */
 
 
@@ -169,14 +169,13 @@ int main(int argc, char* argv[]) {
   // equivalent to (*ptr).a .  Note the difference 
   // between FourInts and FourInts*.)
   FourInts *four = (FourInts*) malloc(sizeof(FourInts));
-  fillArray((int*) &four, 4);
- 
- // assert(four->a == 2);
- // assert(four->b == 5);
- // assert(four->c == 8);
- // assert(four->d == 11);
+  fillArray((int*) four, 4);
   
-  
+  assert(four->a = 2);
+  assert(four->b = 5);
+  assert(four->c = 8);
+  assert(four->d = 11);
+
   free(four);
 	
   return 0;

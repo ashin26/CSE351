@@ -1,0 +1,5 @@
+Speedy thing goes in, speedy thing comes out.
+1 6 11 16 21 26
+4 471
+6
+145620

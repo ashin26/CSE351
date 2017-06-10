@@ -1,0 +1,225 @@
+ashin26@localhost bomb16]$ gdb bomb
+GNU gdb (GDB) Red Hat Enterprise Linux 7.11-67.el7
+Copyright (C) 2016 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
+and "show warranty" for details.
+This GDB was configured as "x86_64-redhat-linux-gnu".
+Type "show configuration" for configuration details.
+For bug reporting instructions, please see:
+<http://www.gnu.org/software/gdb/bugs/>.
+Find the GDB manual and other documentation resources online at:
+<http://www.gnu.org/software/gdb/documentation/>.
+For help, type "help".
+Type "apropos word" to search for commands related to "word"...
+Reading symbols from bomb...done.
+(gdb) run
+Starting program: /home/ashin26/351/lab2/bomb16/bomb 
+Missing separate debuginfos, use: debuginfo-install glibc-2.17-157.el7_3.1.x86_64
+Welcome to my fiendish little bomb. You have 6 phases with
+which to blow yourself up. Have a nice day!
+hello
+
+BOOM!!!
+The bomb has blown up.
+[Inferior 1 (process 3049) exited with code 010]
+(gdb) break main
+Breakpoint 1 at 0x400da6: file bomb.c, line 37.
+(gdb) 
+Note: breakpoint 1 also set at pc 0x400da6.
+Breakpoint 2 at 0x400da6: file bomb.c, line 37.
+(gdb) run
+Starting program: /home/ashin26/351/lab2/bomb16/bomb 
+
+Breakpoint 1, main (argc=1, argv=0x7fffffffd958) at bomb.c:37
+37	{
+(gdb) list
+32	 */
+33	
+34	FILE *infile;
+35	
+36	int main(int argc, char *argv[])
+37	{
+38	    char *input;
+39	
+40	    /* Note to self: remember to port this bomb to Windows and put a 
+41	     * fantastic GUI on it. */
+(gdb) 
+42	
+43	    /* When run with no arguments, the bomb reads its input lines 
+44	     * from standard input. */
+45	    if (argc == 1) {  
+46		infile = stdin;
+47	    } 
+48	
+49	    /* When run with one argument <file>, the bomb reads from <file> 
+50	     * until EOF, and then switches to standard input. Thus, as you 
+51	     * defuse each phase, you can add its defusing string to <file> and
+(gdb) 
+52	     * avoid having to retype it. */
+53	    else if (argc == 2) {
+54		if (!(infile = fopen(argv[1], "r"))) {
+55		    printf("%s: Error: Couldn't open %s\n", argv[0], argv[1]);
+56		    exit(8);
+57		}
+58	    }
+59	
+60	    /* You can't call the bomb with more than 1 command line argument. */
+61	    else {
+(gdb) 
+62		printf("Usage: %s [<input_file>]\n", argv[0]);
+63		exit(8);
+64	    }
+65	
+66	    /* Do all sorts of secret stuff that makes the bomb harder to defuse. */
+67	    initialize_bomb();
+68	
+69	    printf("Welcome to my fiendish little bomb. You have 6 phases with\n");
+70	    printf("which to blow yourself up. Have a nice day!\n");
+71	
+(gdb) 
+72	    /* Hmm...  Six phases must be more secure than one phase! */
+73	    input = read_line();             /* Get input                   */
+74	    phase_1(input);                  /* Run the phase               */
+75	    phase_defused();                 /* Drat!  They figured it out!
+76					      * Let me know how they did it. */
+77	    printf("Phase 1 defused. How about the next one?\n");
+78	
+79	    /* The second phase is harder.  No one will ever figure out
+80	     * how to defuse this... */
+81	    input = read_line();
+(gdb) break phase_1
+Breakpoint 3 at 0x400ee7
+(gdb) continue
+Continuing.
+Welcome to my fiendish little bomb. You have 6 phases with
+which to blow yourself up. Have a nice day!
+hello
+
+Breakpoint 3, 0x0000000000400ee7 in phase_1 ()
+(gdb) list
+82	    phase_2(input);
+83	    phase_defused();
+84	    printf("That's number 2.  Keep going!\n");
+85	
+86	    /* I guess this is too easy so far.  Some more complex code will
+87	     * confuse people. */
+88	    input = read_line();
+89	    phase_3(input);
+90	    phase_defused();
+91	    printf("Halfway there!\n");
+(gdb) disas
+Dump of assembler code for function phase_1:
+=> 0x0000000000400ee7 <+0>:	sub    $0x8,%rsp
+   0x0000000000400eeb <+4>:	mov    $0x401a38,%esi
+   0x0000000000400ef0 <+9>:	callq  0x40122b <strings_not_equal>
+   0x0000000000400ef5 <+14>:	test   %eax,%eax
+   0x0000000000400ef7 <+16>:	je     0x400efe <phase_1+23>
+   0x0000000000400ef9 <+18>:	callq  0x401605 <explode_bomb>
+   0x0000000000400efe <+23>:	add    $0x8,%rsp
+   0x0000000000400f02 <+27>:	retq   
+End of assembler dump.
+(gdb) si
+0x0000000000400eeb in phase_1 ()
+(gdb) disas
+Dump of assembler code for function phase_1:
+   0x0000000000400ee7 <+0>:	sub    $0x8,%rsp
+=> 0x0000000000400eeb <+4>:	mov    $0x401a38,%esi
+   0x0000000000400ef0 <+9>:	callq  0x40122b <strings_not_equal>
+   0x0000000000400ef5 <+14>:	test   %eax,%eax
+   0x0000000000400ef7 <+16>:	je     0x400efe <phase_1+23>
+   0x0000000000400ef9 <+18>:	callq  0x401605 <explode_bomb>
+   0x0000000000400efe <+23>:	add    $0x8,%rsp
+   0x0000000000400f02 <+27>:	retq   
+End of assembler dump.
+(gdb) si
+0x0000000000400ef0 in phase_1 ()
+(gdb) disas
+Dump of assembler code for function phase_1:
+   0x0000000000400ee7 <+0>:	sub    $0x8,%rsp
+   0x0000000000400eeb <+4>:	mov    $0x401a38,%esi
+=> 0x0000000000400ef0 <+9>:	callq  0x40122b <strings_not_equal>
+   0x0000000000400ef5 <+14>:	test   %eax,%eax
+   0x0000000000400ef7 <+16>:	je     0x400efe <phase_1+23>
+   0x0000000000400ef9 <+18>:	callq  0x401605 <explode_bomb>
+   0x0000000000400efe <+23>:	add    $0x8,%rsp
+   0x0000000000400f02 <+27>:	retq   
+End of assembler dump.
+(gdb) p /x $rdi
+$1 = 0x603a80
+(gdb) x /s $rdi
+0x603a80 <input_strings>:	"hello"
+(gdb) x /s $rsi
+0x401a38:	"Speedy thing goes in, speedy thing comes out."
+(gdb) c
+Continuing.
+
+BOOM!!!
+The bomb has blown up.
+[Inferior 1 (process 3053) exited with code 010]
+(gdb) 
+The program is not being run.
+(gdb) 
+The program is not being run.
+(gdb) Speedy thing goes in, speedy thing comes out.
+Undefined command: "Speedy".  Try "help".
+(gdb) 
+Undefined command: "Speedy".  Try "help".
+(gdb) c
+The program is not being run.
+(gdb) c
+The program is not being run.
+(gdb) run
+Starting program: /home/ashin26/351/lab2/bomb16/bomb 
+
+Breakpoint 1, main (argc=1, argv=0x7fffffffd958) at bomb.c:37
+37	{
+(gdb) c
+Continuing.
+Welcome to my fiendish little bomb. You have 6 phases with
+which to blow yourself up. Have a nice day!
+Speedy thing goes in, speedy thing comes out.
+
+Breakpoint 3, 0x0000000000400ee7 in phase_1 ()
+(gdb) 
+Continuing.
+Phase 1 defused. How about the next one?
+
+continue        
+
+BOOM!!!
+The bomb has blown up.
+[Inferior 1 (process 3063) exited with code 010]
+(gdb) ./defuser.txt
+Undefined command: "".  Try "help".
+(gdb) ./bomb defuser.txt
+Undefined command: "".  Try "help".
+(gdb) exit
+Undefined command: "exit".  Try "help".
+(gdb) q
+[ashin26@localhost bomb16]$ ./bomb defuser.txt
+Welcome to my fiendish little bomb. You have 6 phases with
+which to blow yourself up. Have a nice day!
+Phase 1 defused. How about the next one?
+
+c
+
+BOOM!!!
+The bomb has blown up.
+[ashin26@localhost bomb16]$ gdb bomb
+GNU gdb (GDB) Red Hat Enterprise Linux 7.11-67.el7
+Copyright (C) 2016 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
+and "show warranty" for details.
+This GDB was configured as "x86_64-redhat-linux-gnu".
+Type "show configuration" for configuration details.
+For bug reporting instructions, please see:
+<http://www.gnu.org/software/gdb/bugs/>.
+Find the GDB manual and other documentation resources online at:
+<http://www.gnu.org/software/gdb/documentation/>.
+For help, type "help".
+Type "apropos word" to search for commands related to "word"...
+
